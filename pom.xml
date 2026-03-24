@@ -168,15 +168,23 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!-- This plugin makes source files and javadocs available inside eclipse.  In IntelliJ, this works without plugin.-->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.10</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-enforcer-plugin</artifactId>
+			  <configuration>
+				  <skip>true</skip>
+			  </configuration>
 			</plugin>
+
+<!--			<plugin>-->
+<!--				&lt;!&ndash; This plugin makes source files and javadocs available inside eclipse.  In IntelliJ, this works without plugin.&ndash;&gt;-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-eclipse-plugin</artifactId>-->
+<!--				<version>2.10</version>-->
+<!--				<configuration>-->
+<!--					<downloadSources>true</downloadSources>-->
+<!--					<downloadJavadocs>true</downloadJavadocs>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 			<plugin>
 <!--				The maven-shade-plugin replaces the maven-assembly-plugin to configure "mvn package". The assembly-plugin regularly-->
 <!--				creates problems when GeoTools are used, which the shade-plugin does not (see-->
