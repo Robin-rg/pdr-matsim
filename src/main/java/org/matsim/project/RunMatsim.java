@@ -25,6 +25,19 @@ import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.scenario.ScenarioUtils;
 
+/* == DRS == */
+import java.util.Set;
+
+import org.matsim.core.config.ConfigGroup;
+
+import at.ac.ait.matsim.drs.run.Drs;
+import at.ac.ait.matsim.drs.run.DrsConfigGroup;
+import at.ac.ait.matsim.drs.util.CarLinkAssigner;
+import at.ac.ait.matsim.drs.util.DrsUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+/* ========= */
+
 /**
  * @author nagel
  *
@@ -33,12 +46,25 @@ public class RunMatsim{
 
 	public static void main(String[] args) {
 
+		/* == DRS == */
+		// fonctionne pas car pas dans une instance de classe RunMatsim
+		Logger LOGGER = LogManager.getLogger();
+		/* ========= */
+
+		boolean scenario_drs;
+
 		Config config;
 		if ( args==null || args.length==0 || args[0]==null ){
-			config = ConfigUtils.loadConfig( "scenarios/equil/config.xml" );
+			String config_path = "scenarios/douai/douai_config.xml";
+			scenario_drs = config_path.contains("drs");
+			config = ConfigUtils.loadConfig( config_path, new ConfigGroup[]{new DrsConfigGroup()} );
 		} else {
-			config = ConfigUtils.loadConfig( args );
+			// if the config name contains "drs", set scenario_drs as true
+			scenario_drs = args[0].contains("drs");
+			config = ConfigUtils.loadConfig( args, new ConfigGroup[]{new DrsConfigGroup()} );
 		}
+		LOGGER.info("\n\nDRS activated: {} ", scenario_drs);
+
 
 		config.controller().setOverwriteFileSetting( OverwriteFileSetting.deleteDirectoryIfExists );
 
@@ -48,20 +74,34 @@ public class RunMatsim{
 		
 		Scenario scenario = ScenarioUtils.loadScenario(config) ;
 
-		// possibly modify scenario here
-		
-		// ---
-		
+		/* == DRS == */
+		if (scenario_drs) {
+			(new CarLinkAssigner(scenario.getNetwork())).run(scenario.getPopulation());
+			DrsUtil.addMissingCoordsToPlanElementsFromLinks(scenario.getPopulation(), scenario.getNetwork());
+			DrsUtil.addNewAllowedModeToCarLinks(scenario.getNetwork(), "drsDriver");
+			int fixed = DrsUtil.addMissingDrsAffinity(scenario.getPopulation());
+			if (fixed == 0) {
+				LOGGER.info("All agents already had a {}, great!", "drsAffinity");
+			} else {
+				LOGGER.warn("For {} agents {} was missing and has been added.", fixed, "drsAffinity");
+			}
+
+			DrsUtil.addFakeGenericRouteToDrsDriverLegs(scenario.getPopulation());
+			int count = DrsUtil.addDrsPlanForEligiblePlans(scenario.getPopulation(), scenario.getConfig(), "drsRider", Set.of("ride"), new String[0]);
+			LOGGER.info("Added initial drs rider plan to {} agent(s)", count);
+			count = DrsUtil.addDrsDriverPlans(scenario.getPopulation(), scenario.getConfig(), new String[0]);
+			LOGGER.info("Added initial drs driver plan to {} agent(s)", count);
+		}
+		/* ========= */
+
 		Controler controler = new Controler( scenario ) ;
-		
-		// possibly modify controler here
 
-//		controler.addOverridingModule( new OTFVisLiveModule() ) ;
+		/* == DRS == */
+		if (scenario_drs) {
+			Drs.prepareController(controler);
+		}
+		/* ========= */
 
-//		controler.addOverridingModule( new SimWrapperModule() );
-		
-		// ---
-		
 		controler.run();
 	}
 	
