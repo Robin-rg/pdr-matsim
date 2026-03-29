@@ -4,7 +4,7 @@
 <!-- Copy model data from https://github.com/ait-energy/matsim-model-vienna -->
 <config>
     <module name="global">
-        <param name="numberOfThreads" value="3" />
+        <param name="numberOfThreads" value="12" />
         <param name="coordinateSystem" value="epsg:3416" />
     </module>
 
@@ -17,17 +17,17 @@
     </module>
 
     <module name="controller">
-        <param name="outputDirectory" value="./output-vienna-drs" />
+        <param name="outputDirectory" value="./output-vienna-drs-test" />
         <param name="overwriteFiles" value="deleteDirectoryIfExists" />
         <param name="firstIteration" value="0" />
         <param name="lastIteration" value="10" />
-        <param name="writeEventsInterval" value="1" />
-        <param name="writePlansInterval" value="1" />
-        <param name="writeSnapshotsInterval" value="1" />
+        <param name="writeEventsInterval" value="10" />
+        <param name="writePlansInterval" value="10" />
+        <param name="writeSnapshotsInterval" value="10" />
     </module>
 
     <module name="qsim">
-        <param name="numberOfThreads" value="3" />
+        <param name="numberOfThreads" value="12" />
         <param name="startTime" value="00:00:00" />
         <param name="endTime" value="30:00:00" />
         <!-- DRS NOTE: drsDriver mode must be added as a mainMode to QSim -->
