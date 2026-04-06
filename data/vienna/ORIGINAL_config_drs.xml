@@ -4,7 +4,7 @@
 <!-- Copy model data from https://github.com/ait-energy/matsim-model-vienna -->
 <config>
     <module name="global">
-        <param name="numberOfThreads" value="10" />
+        <param name="numberOfThreads" value="12" />
         <param name="coordinateSystem" value="epsg:3416" />
     </module>
 
@@ -17,17 +17,17 @@
     </module>
 
     <module name="controller">
-        <param name="outputDirectory" value="./outputs/XXX" />
-        <param name="overwriteFiles" value="failIfDirectoryExists" />
+        <param name="outputDirectory" value="./output-vienna-drs-test" />
+        <param name="overwriteFiles" value="deleteDirectoryIfExists" />
         <param name="firstIteration" value="0" />
-        <param name="lastIteration" value="25" />
+        <param name="lastIteration" value="10" />
         <param name="writeEventsInterval" value="10" />
         <param name="writePlansInterval" value="10" />
         <param name="writeSnapshotsInterval" value="10" />
     </module>
 
     <module name="qsim">
-        <param name="numberOfThreads" value="10" />
+        <param name="numberOfThreads" value="12" />
         <param name="startTime" value="00:00:00" />
         <param name="endTime" value="30:00:00" />
         <!-- DRS NOTE: drsDriver mode must be added as a mainMode to QSim -->
@@ -196,23 +196,8 @@
 
     <!-- DRS NOTE: main drs config, leave empty to use defaults -->
     <module name="drs">
-		<!-- Daily price for car usage including when using the private car as drsDriver. If specified here do not additionaly specify it in planCalcScore.scoringParameters.modeParams.dailyMonetaryConstant - otherwise it will be counted twice (typically negative) -->
-		<param name="carAndDrsDailyMonetaryConstant" value="-12.34" />
-		<!-- The amount of money per kilometre the driver gains for a rider (typically positive) -->
-		<param name="driverProfitPerKm" value="0.8" />
-		<!-- Maximum euclidean distance between requests to be considered by the matching algorithm, i.e. if both the distance between two requests' origin and destination location are closer than the given value they are potential matches. The default value is good for urban areas. For large areas with sparsely distributed population and low drs share, you may consider using a larger value. -->
-		<param name="maxMatchingDistanceMeters" value="2000" />
-		<!-- Limits the number of possible riders requests considered for a driver during the matching process. Used to speed up computations, values 20 to 40 make a good trade-off between computational speed and quality of results. To turn off this feature specify a sufficiently big number (not recommended). (inspired by taxi contrib) -->
-		<param name="maxPossibleCandidates" value="30" />
-		<!-- minimum length of legs (routed with the drsDriver mode) to be considered for the drs driver mode. 0 means no minimum. -->
-		<param name="minDriverLegMeters" value="10" />
-		<!-- minimum length of legs (routed with the drsDriver mode) to be considered for the drs ride mode. 0 means no minimum. -->
-		<param name="minRiderLegMeters" value="10" />
-		<!-- The amount of time the driver is expected to wait until the rider enters the vehicle. -->
-		<param name="pickupWaitingSeconds" value="300" />
-		<!-- The amount of time the riders are willing to adjust their departure times. During the matching process, the arrival of driver to pick-up point is checked whether it is within the rider departure time +- the riderDepartureTimeAdjustment. -->
-		<param name="riderDepartureTimeAdjustmentSeconds" value="900" />
-		<!-- The duration of the time segments used in time segment registers of riders requests. Must be larger than riderDepartureTimeAdjustmentSeconds. To avoid scenarios where a driver and a rider departure time are close, but cross a segment boundary, candidate requests are taken not only from the current segment but also from the one before and after. -->
-		<param name="timeSegmentLengthSeconds" value="7200" />
+        <param name="driverProfitPerKm" value="0.8" />
+        <param name="carAndDrsDailyMonetaryConstant" value="-12.34" />
+        <param name="pickupWaitingSeconds" value="300" />
     </module>
 </config>
